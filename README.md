@@ -1,5 +1,7 @@
 # vimo
 
+A simple demonstration may be found [here](https://asciinema.org/a/a3l1kz2v859g3orvmkffwotxi)
+
     NAME
 
        vimo
