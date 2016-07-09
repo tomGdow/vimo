@@ -1,6 +1,23 @@
-# vimo
+## vimo
 
-A simple demonstration may be found [here](https://asciinema.org/a/a3l1kz2v859g3orvmkffwotxi)
+   vimo is a bash script that opens a file from anywhere within an
+application such as that created by Ruby-on-Rails, without having to 
+change directory or specify a filepath.
+### Demonstration
+  
+A simple demonstration may be found [here](https://asciinema.org/a/as606114p3ph827jeoue7h432)
+
+### Download 
+On an Ubuntu/Xubuntu OS:
+
+     git clone https://github.com/tomGdow/vimo.git
+     # From within the directory 'vimo', move the script (file) 'vimo' to ${HOME}/bin
+     cd vimo
+     mv vimo "{HOME}/bin"
+     # It may be necessary to change permissions
+     chmod u+x "${HOME}/bin/vimo"
+
+### Description    
 
     NAME
 
