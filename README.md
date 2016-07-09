@@ -4,7 +4,7 @@
 
        vimo
 
-       This script opens a file in vim from anywhere within an application
+       This bash script opens a file in vim from anywhere within an application
        framework.  
 
     SYNOPSIS
