@@ -93,7 +93,8 @@ REQUIREMENTS
            export VIMOMAX=50
 
 NOTES
-      (1)  Tested with Rails 4 and Rails 5, and Middleman 
+      (1)  Tested with Rails 4 and Rails 5, and Middleman with Ubuntu 14
+           and xubuntu 16.  
       (2)  It is best to double-quote search terms, especially if 
            wildcards are included 
       (3)  $(basename $0) may be used to search for either files or 
@@ -154,12 +155,22 @@ shift $(( ${OPTIND} - 1 ))
 
 checkarg () {
 
-if [[ ! $1 ]]; then
-	echo "Missing argument ('vimo -h' for help)" 
-	exit 1
-fi
+	if [[ ${verbose} == 1 ]]; then
+		checkargs=$(showFunctionName)
+	fi
+
+	if [[ ! $1 ]]; then
+		echo "Missing argument ('vimo -h' for help)" 
+		exit 1
+	fi
 }
+
 setEditor () {
+
+	if [[ ${verbose} == 1 ]]; then
+		showFunctionName
+	fi
+
 	# if EDITOR is not set, use vim 
 	if [[ -z "${EDITOR// }" ]];then
 		EDITOR='vim'
@@ -172,7 +183,7 @@ showFunctionName () {
 
 setWorkingDirectory () {
 
-	if [[ $verbose == 1 ]]; then
+	if [[ ${verbose} == 1 ]]; then
 		workdir=$(showFunctionName)
 	fi
 
@@ -188,24 +199,24 @@ fileDirNumber () {
 
 	# assign the number of files OR directories found to 'pathfound' variable
 
-	if [[ $verbose == 1 ]]; then
+	if [[ ${verbose} == 1 ]]; then
 		showFunctionName
 	fi
 
-	if [[ $2 == 0 ]]; then
+	if [[ ${2} == 0 ]]; then
 		searchtype="f"
 	else
 		searchtype="d"
 	fi
 
-	if [[ $usecurrentdir == 1 ]]; then
+	if [[ ${usecurrentdir} == 1 ]]; then
 		pathsfound="$(find . -type $searchtype -name  "$1" | wc -l)"
 	else
 
-		if [[ $caseinsensitive == 1 ]]; then
-			pathsfound="$(find "${VIMODIR}" -type $searchtype -iname "$1" | wc -l)"
+		if [[ ${caseinsensitive} == 1 ]]; then
+			pathsfound="$(find "${VIMODIR}" -type ${searchtype} -iname "$1" | wc -l)"
 		else
-			pathsfound="$(find "${VIMODIR}" -type $searchtype -name "$1" | wc -l)"
+			pathsfound="$(find "${VIMODIR}" -type ${searchtype} -name "$1" | wc -l)"
 		fi
 
 	fi
@@ -216,7 +227,7 @@ checkFileDirNumber () {
 	# Check the number of files OR directories returned,
 	# if greater than VIMOMAX, give user choice
 
-	if [[ pathsfound -gt ${VIMOMAX} ]];then
+	if [[ ${pathsfound} -gt ${VIMOMAX} ]];then
 		read -p  "${pathsfound} files detected. Do you wish to continute [Y/n]?" userchoice
 		if [[ $userchoice == [Yy]* ]]; then
 			echo "OK"
@@ -229,7 +240,7 @@ checkFileDirNumber () {
 
 findMe () {
 
-	if [[ $verbose == 1 ]]; then
+	if [[ ${verbose} == 1 ]]; then
 		showFunctionName
 	fi
 
@@ -239,11 +250,11 @@ findMe () {
 		searchtype="d"
 	fi
 
-	if [[ $usecurrentdir == 1 ]]; then
-		find_paths="$(find . -type $searchtype -name "$1")"
+	if [[ ${usecurrentdir} == 1 ]]; then
+		find_paths="$(find . -type ${searchtype} -name "$1")"
 	else
-		if [[ $caseinsensitive == 1 ]]; then
-			find_paths="$(find "${VIMODIR}" -type $searchtype  -iname "$1")"
+		if [[ ${caseinsensitive} == 1 ]]; then
+			find_paths="$(find "${VIMODIR}" -type ${searchtype}  -iname "$1")"
 		else
 			find_paths="$(find "${VIMODIR}" -type $searchtype  -name "$1")"
 		fi
@@ -255,7 +266,7 @@ showFileDirPath () {
 	# Show the file/dir location when only a single file/dir is found
 	# invoked by the -l option
 
-	if [[ $verbose == 1 ]]; then
+	if [[ ${verbose} == 1 ]]; then
 		showFunctionName
 	fi
 
@@ -285,7 +296,7 @@ showFilesDirsPaths () {
 	# Show a numbered list of files or directories if more than one detected
 	# involked by the -l option
 
-	if [[ $verbose == 1 ]]; then
+	if [[ ${verbose} == 1 ]]; then
 		showFunctionName
 	fi
 
@@ -314,7 +325,7 @@ openFile () {
 
 	# Open a file (but not a directory) in EDITOR 
 
-	if [[ $verbose == 1 ]]; then
+	if [[ ${verbose} == 1 ]]; then
 		showFunctionName
 	fi
 	if [[ ${pathsfound} -eq 0 ]];then
@@ -330,7 +341,7 @@ showSelectList () {
 
 	# Shows a select-list of files (but not directories) to user if more than one detected
 
-	if [[ $verbose == 1 ]]; then
+	if [[ ${verbose} == 1 ]]; then
 		showFunctionName
 	fi
 
@@ -376,17 +387,18 @@ init () {
   checkarg "${1}"
 	setWorkingDirectory
 
-	if [[ $verbose == 1 ]]; then
+	if [[ ${verbose} == 1 ]]; then
 		showWorkingDirectory
 		echo "Max File Number (VIMOMAX): ${VIMOMAX}"
 		echo "Editor (EDITOR): ${EDITOR}"
 		showFunctionName
+		echo "${checkargs}"
 		echo "${workdir}"
 	fi
 
 	setEditor
 
-	if [[ $searchdir == 1 ]];then
+	if [[ ${searchdir} == 1 ]];then
 		# Search for directories only
 		fileDirNumber "$1" 1
 		checkFileDirNumber
@@ -399,7 +411,7 @@ init () {
 		fileDirNumber "$1" 0
 		checkFileDirNumber
 
-		if [[ $listonly == 1 ]];then
+		if [[ ${listonly} == 1 ]];then
 			findMe  "$1" 0 
 			showFileDirPath "$1" 0
 			pipeToLess showFilesDirsPaths 
