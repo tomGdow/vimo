@@ -11,7 +11,8 @@ NAME
        framework.  
 
 SYNOPSIS
-        $(basename $0) [-c] [-d] [-f] [-h] [-i] [-l] [-v]  <search term>
+        $(basename $0) [-c] [-d] [-f] [-h] [-i] [-l] [-v]  <search term> [filename1 
+        filname2 ...]
 
 DESCRIPTION
 
@@ -38,6 +39,9 @@ DESCRIPTION
 
        If only a single file is found, it is by default opened 
        automatically in ${EDITOR}.
+
+       If more than one non-optional argument is given, all files are
+       opened in ${EDITOR} provided they exist in the CURRENT DIRECTORY. 
 
        The basic search command is of the following form, 
        where VIMODIR strives to be the application root directory.
@@ -109,6 +113,9 @@ EXAMPLE USAGE
       (5)  $(basename $0) -i "gemfile" 
       (6)  $(basename $0) -vil "gemfile" 
       (7)  $(basename $0) -d  "stylesheet*" 
+      (8)  $(basename $0) fileOne fileTwo  # Opens both files in ${EDITOR} \
+provided that they
+                                 # exist in current directory
 AUTHOR
       tomgdow
 END
@@ -148,7 +155,6 @@ while getopts ":cdfhilv" opt; do
 			;;
 	esac
 done
-
 shift $(( ${OPTIND} - 1 ))
 
 # Functions
@@ -160,7 +166,12 @@ checkarg () {
 	fi
 
 	if [[ ! $1 ]]; then
-		echo "Missing argument ('vimo -h' for help)" 
+		echo "Missing argument ('vimo -h' for help))" 
+		exit 1
+	fi
+
+	if [[ ${#} -gt 1 ]]; then
+    openAll "${@}"
 		exit 1
 	fi
 }
@@ -337,6 +348,27 @@ openFile () {
 	fi
 }
 
+openAll () {
+
+	# Open all arguments in EDITOR  provided that they exist in current
+	# directory
+
+	declare foundFiles
+
+	for var in ${@}
+	do
+		foundFiles+=" ""$(ls | grep "^$var$")"
+	done
+
+	declare -a arrFoundFiles=(${foundFiles})
+
+	if [[ ${#arrFoundFiles[@]} -gt 0 ]];then
+		$EDITOR ${foundFiles}
+  else 
+    echo "Not found in current directory: ${@}"
+	fi 
+}
+
 showSelectList () {
 
 	# Shows a select-list of files (but not directories) to user if more than one detected
@@ -384,7 +416,7 @@ pipeToLess () {
 }
 
 init () {
-  checkarg "${1}"
+  checkarg "${@}"
 	setWorkingDirectory
 
 	if [[ ${verbose} == 1 ]]; then
@@ -423,4 +455,4 @@ init () {
 	fi
 }
 
-init "$1"
+init "$@"
