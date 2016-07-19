@@ -11,7 +11,7 @@ NAME
        framework.  
 
 SYNOPSIS
-        $(basename $0) [-c] [-d] [-f] [-h] [-i] [-l] [-m] [-v]  <search term> [filename1 
+        $(basename $0) [-c] [-d] [-f] [-h] [-i] [-l] [-v]  <search term> [filename1 
         filname2 ...]
 
 DESCRIPTION
@@ -40,12 +40,8 @@ DESCRIPTION
        If only a single file is found, it is by default opened 
        automatically in ${EDITOR}.
 
-       If more than one non-optional argument is given, all files (not
-       directories)  are opened in ${EDITOR} provided they exist in the
-       CURRENT DIRECTORY. This default behaviour may be over-ridden using
-       the '-m' option. 
-       
-       To search for multiple terms, use the '-m' option. 
+       If more than one non-optional argument is given, all files are
+       opened in ${EDITOR} provided they exist in the CURRENT DIRECTORY. 
 
        The basic search command is of the following form, 
        where VIMODIR strives to be the application root directory.
@@ -65,7 +61,6 @@ OPTIONS
       -i: case-insensitive search
       -l: give a list of file locations only (open in text editor 
           functionality disabled) 
-      -m: search for multiple terms 
       -v: verbose mode. Gives, among other things, a list of functions
           called. 
 
@@ -118,12 +113,9 @@ EXAMPLE USAGE
       (5)  $(basename $0) -i "gemfile" 
       (6)  $(basename $0) -vil "gemfile" 
       (7)  $(basename $0) -d  "stylesheet*" 
-      (8)  $(basename $0) "fileOne" "fileTwo"  # Opens both files in \
-${EDITOR} provided that
-           # they exist in current directory
-      (9)  $(basename $0) -m "fileOne" "fileTwo" # Search for 'fileOne' and 'fileTwo'
-      (10) $(basename $0) -md "dirOne" "dirTwo"  # Search for 'dirOne' and 'dirTwo'
-
+      (8)  $(basename $0) fileOne fileTwo  # Opens both files in ${EDITOR} \
+provided that they
+                                 # exist in current directory
 AUTHOR
       tomgdow
 END
@@ -137,7 +129,7 @@ if [[ -z "${VIMOMAX// }" ]];then
 	VIMOMAX=30 
 fi 
 
-while getopts ":cdfhilvm" opt; do
+while getopts ":cdfhilv" opt; do
 	case $opt in
 		c)
 			usecurrentdir=1 
@@ -158,9 +150,6 @@ while getopts ":cdfhilvm" opt; do
 		l)
 			listonly=1 
 			;;
-		m)
-			multisearch=1 
-			;;
 		v)
 			verbose=1 
 			;;
@@ -170,19 +159,19 @@ shift $(( ${OPTIND} - 1 ))
 
 # Functions
 
-checkArg () {
+checkarg () {
 
 	if [[ ${verbose} == 1 ]]; then
 		checkargs=$(showFunctionName)
 	fi
 
-	if [[ ! ${1} ]]; then
+	if [[ ! $1 ]]; then
 		echo "Missing argument ('vimo -h' for help))" 
 		exit 1
 	fi
 
-	if [[ ${#} -gt 1 &&  ${multisearch} -ne 1 ]]; then
-		openAll "${@}"
+	if [[ ${#} -gt 1 ]]; then
+    openAll "${@}"
 		exit 1
 	fi
 }
@@ -217,61 +206,40 @@ setWorkingDirectory () {
 	fi
 }
 
-findPaths () {
+fileDirNumber () {
+
+	# assign the number of files OR directories found to 'pathfound' variable
 
 	if [[ ${verbose} == 1 ]]; then
 		showFunctionName
 	fi
 
-	if [[ ${@:${#@}} == 0 ]]; then  # check last arg equals zero
+	if [[ ${2} == 0 ]]; then
 		searchtype="f"
 	else
 		searchtype="d"
 	fi
 
 	if [[ ${usecurrentdir} == 1 ]]; then
-		searchpath=$(pwd)
+		pathsfound="$(find . -type $searchtype -name  "$1" | wc -l)"
 	else
-		searchpath="${VIMODIR}"
-	fi
 
-	if [[ ${caseinsensitive} == 1 ]];then
-		nametype="iname"
-	else
-		nametype="name"
-	fi 
-
-	for var in "${@:1:$(($#-1))}";do  # all args except last
-		temp=$(find "${VIMODIR}" -type $searchtype -"${nametype}" "$var")
-		if [[ ${#temp} -ne 0 ]]; then 
-			find_paths+="${temp}\n"
+		if [[ ${caseinsensitive} == 1 ]]; then
+			pathsfound="$(find "${VIMODIR}" -type ${searchtype} -iname "$1" | wc -l)"
+		else
+			pathsfound="$(find "${VIMODIR}" -type ${searchtype} -name "$1" | wc -l)"
 		fi
-	done
 
-	find_paths=$(echo -e "${find_paths}")
+	fi
 }
 
-stringNumber () {
-
-	declare -a arrOfStrings=(${@})
-	declare -i stringNo="${#arrOfStrings[@]}"
-	echo "${stringNo}"
-}
-
-checkPathsNumber () {
+checkFileDirNumber () {
 
 	# Check the number of files OR directories returned,
 	# if greater than VIMOMAX, give user choice
 
-	if [[ ${verbose} == 1 ]]; then
-		showFunctionName
-	fi
-	#declare -a arrOfPaths=(${1})
-	stringNo=$(stringNumber "${1}")
-#	if [[ ${stringNo} -gt 1 ]];then
-	if [[ ${stringNumber} -gt ${VIMOMAX} ]];then
-		read -p  "${stringNo} files detected. Do you wish to continute [Y/n]?"\
-			userchoice
+	if [[ ${pathsfound} -gt ${VIMOMAX} ]];then
+		read -p  "${pathsfound} files detected. Do you wish to continute [Y/n]?" userchoice
 		if [[ $userchoice == [Yy]* ]]; then
 			echo "OK"
 		else
@@ -279,6 +247,29 @@ checkPathsNumber () {
 			exit 1
 		fi
 	fi 
+}
+
+findMe () {
+
+	if [[ ${verbose} == 1 ]]; then
+		showFunctionName
+	fi
+
+	if [[ ${2} == 0 ]]; then
+		searchtype="f"
+	else
+		searchtype="d"
+	fi
+
+	if [[ ${usecurrentdir} == 1 ]]; then
+		find_paths="$(find . -type ${searchtype} -name "$1")"
+	else
+		if [[ ${caseinsensitive} == 1 ]]; then
+			find_paths="$(find "${VIMODIR}" -type ${searchtype}  -iname "$1")"
+		else
+			find_paths="$(find "${VIMODIR}" -type $searchtype  -name "$1")"
+		fi
+	fi
 }
 
 showFileDirPath () {
@@ -290,18 +281,22 @@ showFileDirPath () {
 		showFunctionName
 	fi
 
-	find_paths=${1}
+	if [[ ${2} == 0 ]]; then
+		pathtype="File"
+	else
+		pathtype="Directory"
+	fi
 
-	if [[ ${@:${#@}} -eq 0 ]]; then  # if last arg equals zero
-		echo "Not found: ${@:2:$(($#-2))}" 
-	elif [[ ${@:${#@}} -eq 1 ]]; then 
+	if [[  ${pathsfound} -eq 0 ]];then
+		echo "${pathtype} not detected --> ${1}"
+		exit 1
+	elif [[  ${pathsfound} -eq 1 ]];then
 
 		if [[ ${fullpath} == 1 ]];then
 			find_paths=${find_paths#$HOME}
 		else
 			find_paths="${find_paths#${VIMODIR}}"
 		fi
-
 		echo  "1)  ${find_paths}"
 		exit 1
 	fi
@@ -344,47 +339,33 @@ openFile () {
 	if [[ ${verbose} == 1 ]]; then
 		showFunctionName
 	fi
-
-	stringNo=$(stringNumber "${1}") #could fix this
-
-	if [[ ${stringNo} -eq 0 ]];then
+	if [[ ${pathsfound} -eq 0 ]];then
 		echo "File not detected --> ${1}"
 		exit 1
-	elif [[  ${stringNo} -eq 1 ]];then
+	elif [[  ${pathsfound} -eq 1 ]];then
 		$EDITOR  "${find_paths}"  
 		exit 0
 	fi
 }
+
 openAll () {
 
 	# Open all arguments in EDITOR  provided that they exist in current
 	# directory
 
-	#declare foundFiles
-	if [[ ${verbose} == 1 ]]; then
-		showFunctionName
-	fi
-	if [[ ${caseinsensitive} == 1 ]];then
+	declare foundFiles
 
-		for var in "${@}"
-		do
-			foundFiles+="$(ls | grep -if"^$var$")"" "
-		done
-	else
-		for var in "${@}"
-		do
-			foundFiles+="$(ls | grep -f "^$var$")"" "
-		done
-	fi
+	for var in ${@}
+	do
+		foundFiles+=" ""$(ls | grep "^$var$")"
+	done
 
 	declare -a arrFoundFiles=(${foundFiles})
 
 	if [[ ${#arrFoundFiles[@]} -gt 0 ]];then
 		$EDITOR ${foundFiles}
-	else 
-		echo "-->Files not found in current directory: ${@}"
-		echo "--> To search for multiple terms, use the '-m' option"
-		echo "--> To search for directories, use the '-d' option"
+  else 
+    echo "Not found in current directory: ${@}"
 	fi 
 }
 
@@ -396,8 +377,7 @@ showSelectList () {
 		showFunctionName
 	fi
 
-	stringNo=$(stringNumber "${1}")
-	pathlist="${1}"
+	pathlist="${find_paths}"
 	IFS=$'\n'  # necessary if find_paths contains spaces in returned filepaths 
 	arrpath=($pathlist)
 	arrpaths=("Quit" ${arrpath[@]})  
@@ -428,18 +408,15 @@ showWorkingDirectory () {
 }
 
 pipeToLess () {
-	temp="$1"
-	shift
-	filenumber="${1}"
-	if [[ ${filenumber} -gt 20 ]]; then
-		"${temp}" | less
+	if [[ ${pathsfound} -gt 20 ]]; then
+		"${1}" | less
 	else
-		"${temp}"
+		"${1}"
 	fi
 }
 
 init () {
-	checkArg "${@}"
+  checkarg "${@}"
 	setWorkingDirectory
 
 	if [[ ${verbose} == 1 ]]; then
@@ -455,25 +432,25 @@ init () {
 
 	if [[ ${searchdir} == 1 ]];then
 		# Search for directories only
-
-		findPaths  "${@}" 1 
-		checkPathsNumber "${find_paths}"
-		showFileDirPath "${find_paths}" "${@}" "${stringNo}"
-		pipeToLess showFilesDirsPaths  "${stringNo}"
+		fileDirNumber "$1" 1
+		checkFileDirNumber
+		findMe  "$1" 1 
+		showFileDirPath "$1" 1
+		pipeToLess showFilesDirsPaths
 		exit 1
 	else
 		# Search for files only 
+		fileDirNumber "$1" 0
+		checkFileDirNumber
 
 		if [[ ${listonly} == 1 ]];then
-			findPaths  "${@}" 0 
-			checkPathsNumber "${find_paths}"
-			showFileDirPath "${find_paths}" "${@}" "${stringNo}"
-			pipeToLess showFilesDirsPaths  "${stringNo}"
+			findMe  "$1" 0 
+			showFileDirPath "$1" 0
+			pipeToLess showFilesDirsPaths 
 		else  
-			findPaths  "${@}" 0 
-			checkPathsNumber "${find_paths}"
-			openFile "${find_paths}"
-			showSelectList "${find_paths}"
+			findMe  "$1" 0 
+			openFile "$1" 
+			showSelectList
 		fi 
 	fi
 }
