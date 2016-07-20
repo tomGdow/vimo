@@ -1,4 +1,4 @@
-#!/bin/bash
+!/bin/bash
 
 # Function 'usage' defined before set options. All other functions defined afterwards
 usage () {
@@ -42,7 +42,7 @@ DESCRIPTION
 
        If more than one non-optional argument is given, all files (not
        directories)  are opened in ${EDITOR} provided they exist in the
-       CURRENT DIRECTORY. This default behaviour may be over-ridden using
+       current directory. This default behaviour may be over-ridden using
        the '-m' option. 
        
        To search for multiple terms, use the '-m' option. 
@@ -50,7 +50,7 @@ DESCRIPTION
        The basic search command is of the following form, 
        where VIMODIR strives to be the application root directory.
 
-		      find VIMODIR -type f -name <search-term> 
+          find VIMODIR -type f -name <search-term> 
 
 OPTIONS 
 
@@ -101,6 +101,18 @@ REQUIREMENTS
            Or, include the following line in your .bashrc file
            export VIMOMAX=50
 
+      (4)  The VIMOCHOICE ENV variable controls how multiple files are 
+           opened in vim. If more than VIMOCHOICE files are to be 
+           opened (where, for example,the command contains multiple 
+           search terms without the '-m' option), the user will be 
+           given a choice whether to proceed or abort.
+           This ENV variable need not be set, and defaults to the value
+           of 2. It may be changed as follows:
+           VIMOCHOICE=3
+           export VIMOCHOICE
+           Or, include the following line in your .bashrc file
+           export VIMOCHOICE=3
+
 NOTES
       (1)  Tested with Rails 4 and Rails 5, and Middleman with Ubuntu 14
            and xubuntu 16.  
@@ -112,17 +124,17 @@ NOTES
 
 EXAMPLE USAGE
       (1)  $(basename $0) "routes.rb"  
-      (2)  $(basename $0) -l "index*"   
-      (3)  $(basename $0) -cl "index.html.erb" 
-      (4)  $(basename $0) -clf "index.html*" 
-      (5)  $(basename $0) -i "gemfile" 
-      (6)  $(basename $0) -vil "gemfile" 
-      (7)  $(basename $0) -d  "stylesheet*" 
-      (8)  $(basename $0) "fileOne" "fileTwo"  # Opens both files in \
-${EDITOR} provided that
-           # they exist in current directory
-      (9)  $(basename $0) -m "fileOne" "fileTwo" # Search for 'fileOne' and 'fileTwo'
-      (10) $(basename $0) -md "dirOne" "dirTwo"  # Search for 'dirOne' and 'dirTwo'
+      (2)  $(basename $0) -l "index*"   # list only 
+      (3)  $(basename $0) -cl "index.html.erb" # list only from current directory
+      (4)  $(basename $0) -clf "index.html*"   # list only from current directory
+           and give full paths
+      (5)  $(basename $0) -i "gemfile"  # case-insensitive
+      (6)  $(basename $0) -vil "gemfile"  # verbose mode, case-insensitive, list only
+      (7)  $(basename $0) -d  "stylesheet*" # directory search
+      (8)  $(basename $0) "fileOne" "fileTwo"  # Open both files in ${EDITOR} provided that
+           they exist in current directory
+      (9)  $(basename $0) -m "fileOne" "fileTwo" # Multiple search terms
+      (10) $(basename $0) -md "dirOne" "dirTwo"  # Multiple serch terms, directories only
 
 AUTHOR
       tomgdow
@@ -132,9 +144,13 @@ END
 # Set Options
 
 if [[ -z "${VIMOMAX// }" ]];then
-	# If more than VIMOMAX number of files or directories are found, the user is given a choice to continue or abort
-	# Change using the ENV variable VIMOMAX. Run 'vimo -h' for details. 
+	# If the EVV variable VIMOMAX is not set, set it
 	VIMOMAX=30 
+fi 
+
+if [[ -z "${VIMOCHOICE// }" ]];then
+	# If the EVV variable VIMOMAX is not set, set it
+	VIMOCHOICE=2 
 fi 
 
 while getopts ":cdfhilvm" opt; do
@@ -381,8 +397,8 @@ openAll () {
 	declare -a arrFoundFiles=(${foundFiles})
   declare -i count="${#arrFoundFiles[@]}"
 
-	if [[ ${count} -gt 2 ]];then
-		read -p  "-->Going to open ${count} files in vim. \
+	if [[ ${count} -gt ${VIMOCHOICE} ]];then
+		read -p  "--> ${count} files will be opened in ${EDITOR}. \
 Do you wish to continue [Y/n]?" userchoice
 		if [[ $userchoice == [Yy]* ]]; then
 			$EDITOR ${foundFiles}
