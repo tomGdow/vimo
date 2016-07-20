@@ -177,7 +177,7 @@ checkArg () {
 	fi
 
 	if [[ ! ${1} ]]; then
-		echo "Missing argument ('vimo -h' for help))" 
+		echo "-->Missing argument ('vimo -h' for help)" 
 		exit 1
 	fi
 
@@ -266,9 +266,7 @@ checkPathsNumber () {
 	if [[ ${verbose} == 1 ]]; then
 		showFunctionName
 	fi
-	#declare -a arrOfPaths=(${1})
 	stringNo=$(stringNumber "${1}")
-#	if [[ ${stringNo} -gt 1 ]];then
 	if [[ ${stringNumber} -gt ${VIMOMAX} ]];then
 		read -p  "${stringNo} files detected. Do you wish to continute [Y/n]?"\
 			userchoice
@@ -355,6 +353,7 @@ openFile () {
 		exit 0
 	fi
 }
+
 openAll () {
 
 	# Open all arguments in EDITOR  provided that they exist in current
@@ -364,27 +363,39 @@ openAll () {
 	if [[ ${verbose} == 1 ]]; then
 		showFunctionName
 	fi
+
 	if [[ ${caseinsensitive} == 1 ]];then
-
-		for var in "${@}"
-		do
-			foundFiles+="$(ls | grep -if"^$var$")"" "
-		done
+		nametype="iname"
 	else
-		for var in "${@}"
-		do
-			foundFiles+="$(ls | grep -f "^$var$")"" "
-		done
-	fi
+		nametype="name"
+	fi 
 
+	for var in "${@}";do 
+		temp=$(find . -type f -"${nametype}" "$var")
+		if [[ ${#temp} -ne 0 ]]; then 
+			foundFiles+="${temp}\n"
+		fi
+	done
+
+	foundFiles=$(echo -e "${foundFiles}")
 	declare -a arrFoundFiles=(${foundFiles})
+  declare -i count="${#arrFoundFiles[@]}"
 
-	if [[ ${#arrFoundFiles[@]} -gt 0 ]];then
+	if [[ ${count} -gt 2 ]];then
+		read -p  "-->Going to open ${count} files in vim. \
+Do you wish to continue [Y/n]?" userchoice
+		if [[ $userchoice == [Yy]* ]]; then
+			$EDITOR ${foundFiles}
+		else
+			echo "Exiting at user request"
+			exit 1
+		fi
+	elif [[ ${count} -gt 0 ]];then
+
 		$EDITOR ${foundFiles}
 	else 
 		echo "-->Files not found in current directory: ${@}"
 		echo "--> To search for multiple terms, use the '-m' option"
-		echo "--> To search for directories, use the '-d' option"
 	fi 
 }
 
@@ -439,6 +450,7 @@ pipeToLess () {
 }
 
 init () {
+
 	checkArg "${@}"
 	setWorkingDirectory
 
