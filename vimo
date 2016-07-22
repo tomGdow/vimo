@@ -11,8 +11,8 @@ NAME
        framework.  
 
 SYNOPSIS
-        $(basename $0) [-c] [-d] [-f] [-h] [-i] [-l] [-m] [-v] [-x] <search term> [filename1 
-        filname2 ...]
+        $(basename $0) [-c] [-d] [-f] [-h] [-i] [-l] [-m] [-v] [-x] <search term>
+        [filename1  filname2 ...]
 
 DESCRIPTION
 
