@@ -147,7 +147,6 @@ ADVANCED USAGE
       (2)  $(basename $0) -dx "assets" | sed -n "1p" | xargs tree -L 1
       (2)  $(basename $0) -x "index*" | sed -n "2p"| xclip
 
-`
 AUTHOR
       tomgdow (thomasgdowling@gmail.com)
       
