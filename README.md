@@ -26,7 +26,7 @@ On an Ubuntu/Xubuntu OS:
            framework.  
     
     SYNOPSIS
-            vim [-c] [-d] [-f] [-h] [-i] [-l] [-m] [-v]  <search term> [filename1 
+            vim [-c] [-d] [-f] [-h] [-i] [-l] [-m] [-v] [-x] <search term> [filename1 
             filname2 ...]
     
     DESCRIPTION
@@ -57,15 +57,19 @@ On an Ubuntu/Xubuntu OS:
     
            If more than one non-optional argument is given, all files (not
            directories)  are opened in vim provided they exist in the
-           CURRENT DIRECTORY. This default behaviour may be over-ridden using
+           current directory. This default behaviour may be over-ridden using
            the '-m' option. 
+           
+           To obtain the output of a search in a form suitable for piping
+           to another Unix/Ubuntu command, use the '-x' option (unix-mode),
+           which also over-rides the ability to open the output in vim
            
            To search for multiple terms, use the '-m' option. 
     
            The basic search command is of the following form, 
            where VIMODIR strives to be the application root directory.
     
-           find VIMODIR -type f -name <search-term> 
+              find VIMODIR -type f -name <search-term> 
     
     OPTIONS 
     
@@ -82,7 +86,8 @@ On an Ubuntu/Xubuntu OS:
               functionality disabled) 
           -m: search for multiple terms 
           -v: verbose mode. Gives, among other things, a list of functions
-              called. 
+          -x: unix mode. Gives search output in a form suitable for piping to
+              another Unix/Ubuntu command 
     
     REQUIREMENTS
           
@@ -116,6 +121,18 @@ On an Ubuntu/Xubuntu OS:
                Or, include the following line in your .bashrc file
                export VIMOMAX=50
     
+          (4)  The VIMOCHOICE ENV variable controls how multiple files are 
+               opened in vim. If more than VIMOCHOICE files are to be 
+               opened (where, for example,the command contains multiple 
+               search terms without the '-m' option), the user will be 
+               given a choice whether to proceed or abort.
+               This ENV variable need not be set, and defaults to the value
+               of 2. It may be changed as follows:
+               VIMOCHOICE=3
+               export VIMOCHOICE
+               Or, include the following line in your .bashrc file
+               export VIMOCHOICE=3
+    
     NOTES
           (1)  Tested with Rails 4 and Rails 5, and Middleman with Ubuntu 14
                and xubuntu 16.  
@@ -127,16 +144,24 @@ On an Ubuntu/Xubuntu OS:
     
     EXAMPLE USAGE
           (1)  vim "routes.rb"  
-          (2)  vim -l "index*"   
-          (3)  vim -cl "index.html.erb" 
-          (4)  vim -clf "index.html*" 
-          (5)  vim -i "gemfile" 
-          (6)  vim -vil "gemfile" 
-          (7)  vim -d  "stylesheet*" 
-          (8)  vim "fileOne" "fileTwo"  # Opens both files in vim provided that
-               # they exist in current directory
-          (9)  vim -m "fileOne" "fileTwo" # Search for 'fileOne' and 'fileTwo'
-          (10) vim -md "dirOne" "dirTwo"  # Search for 'dirOne' and 'dirTwo'
+          (2)  vim -l "index*"   # list only 
+          (3)  vim -cl "index.html.erb" # list only from current directory
+          (4)  vim -clf "index.html*"   # list only from current directory
+               and give full paths
+          (5)  vim -i "gemfile"  # case-insensitive
+          (6)  vim -vil "gemfile"  # verbose mode, case-insensitive, list only
+          (7)  vim -d  "stylesheet*" # directory search
+          (8)  vim "fileOne" "fileTwo"  # Open both files in vim provided that
+               they exist in current directory
+          (9)  vim -m "fileOne" "fileTwo" # Multiple search terms
+          (10) vim -md "dirOne" "dirTwo"  # Multiple serch terms, directories only
+          (11) vim -dix "stylesheets"  # Unix-mode, case-insensitive, directories only
+    
+    ADVANCED USAGE
+          (1)  vim -dx "db" | xargs tree
+          (2)  vim -dx "assets" | sed -n "1p" | xargs tree -L 1
+          (2)  vim -x "index*" | sed -n "2p"| xclip
     
     AUTHOR
-          tomgdow
+          tomgdow (thomasgdowling@gmail.com)
+          
