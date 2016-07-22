@@ -1,6 +1,6 @@
 ## vimo
 
-   vimo is a bash script that opens a file from anywhere within an
+   vimo is a bash script that opens a file in vim from anywhere within an
 application such as that created by Ruby-on-Rails, without having to 
 change directory or specify a filepath.
 ### Demonstration
