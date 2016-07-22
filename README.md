@@ -11,11 +11,14 @@ A simple demonstration may be found [here](https://asciinema.org/a/as606114p3ph8
 On an Ubuntu/Xubuntu OS:
 
      git clone https://github.com/tomGdow/vimo.git
-     # From within the directory 'vimo', move the script (file) 'vimo' to ${HOME}/bin
+     (1) #  From within the directory 'vimo', move the script (file) 'vimo' to ${HOME}/bin
      cd vimo
      mv vimo "{HOME}/bin"
      # It may be necessary to change permissions
      chmod u+x "${HOME}/bin/vimo"
+     (2) # Alternatively, create a symlink to 'vimo' in '~/bin'
+     cd ~/bin
+     ln -s /path/to/vimo/vimo vimo
 
 ### Description    
 
