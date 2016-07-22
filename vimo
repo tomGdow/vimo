@@ -376,13 +376,19 @@ openFile () {
 
 	string_no=$(stringNumber "${1}") #could fix this
 
+
 	if [[ ${string_no} -eq 0 ]];then
 		shift
 		echo "File not detected --> ${1}"
 		exit 1
 	elif [[  ${string_no} -eq 1 ]];then
-		$EDITOR  "${find_paths}"  
-		exit 0
+		if [[ ${unixmode} == 1 ]]; then
+			echo  "${find_paths}" 
+			exit 1
+		else
+			$EDITOR  "${find_paths}"  
+			exit 0
+		fi
 	fi
 }
 
@@ -441,9 +447,15 @@ showSelectList () {
 
 	string_no=$(stringNumber "${1}")
 	pathlist="${1}"
+	if [[ ${unixmode} == 1 ]];then
+		echo "${pathlist}"
+		exit 1
+	fi
+
 	IFS=$'\n'  # necessary if find_paths contains spaces in returned filepaths 
 	arrpath=($pathlist)
 	arrpaths=("Quit" ${arrpath[@]})  
+
 
 	if [[ ${fullpath} == 1 ]];then
 		arrpaths=(${arrpaths[@]#${HOME}})
@@ -490,6 +502,7 @@ init () {
 		showWorkingDirectory
 		echo "Max File Number (VIMOMAX): ${VIMOMAX}"
 		echo "Editor (EDITOR): ${EDITOR}"
+    echo "Files to open before asking (VIMOCHOICE); ${VIMOCHOICE}"
 		showFunctionName
 		echo "${checkargs}"
 		echo "${workdir}"
