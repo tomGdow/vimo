@@ -45,6 +45,10 @@ DESCRIPTION
        current directory. This default behaviour may be over-ridden using
        the '-m' option. 
        
+       To obtain the output of a search in a form suitable for piping
+       to another Unix/Ubuntu command, use the '-x' option (unix-mode),
+       which also over-rides the ability to open the output in ${EDITOR}
+       
        To search for multiple terms, use the '-m' option. 
 
        The basic search command is of the following form, 
@@ -67,7 +71,8 @@ OPTIONS
           functionality disabled) 
       -m: search for multiple terms 
       -v: verbose mode. Gives, among other things, a list of functions
-          called. 
+      -x: unix mode. Gives search output in a form suitable for piping to
+          another Unix/Ubuntu command 
 
 REQUIREMENTS
       
@@ -135,9 +140,17 @@ EXAMPLE USAGE
            they exist in current directory
       (9)  $(basename $0) -m "fileOne" "fileTwo" # Multiple search terms
       (10) $(basename $0) -md "dirOne" "dirTwo"  # Multiple serch terms, directories only
+      (11) $(basename $0) -dix "stylesheets"  # Unix-mode, case-insensitive, directories only
 
+ADVANCED USAGE
+      (1)  $(basename $0) -dx "db" | xargs tree
+      (2)  $(basename $0) -dx "assets" | sed -n "1p" | xargs tree -L 1
+      (2)  $(basename $0) -x "index*" | sed -n "2p"| xclip
+
+`
 AUTHOR
-      tomgdow
+      tomgdow (thomasgdowling@gmail.com)
+      
 END
 }
 
@@ -502,7 +515,7 @@ init () {
 		showWorkingDirectory
 		echo "Max File Number (VIMOMAX): ${VIMOMAX}"
 		echo "Editor (EDITOR): ${EDITOR}"
-    echo "Files to open before asking (VIMOCHOICE); ${VIMOCHOICE}"
+    echo "Files to open before asking (VIMOCHOICE): ${VIMOCHOICE}"
 		showFunctionName
 		echo "${checkargs}"
 		echo "${workdir}"
