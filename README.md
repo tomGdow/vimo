@@ -13,30 +13,30 @@ On an Ubuntu/Xubuntu OS:
      git clone https://github.com/tomGdow/vimo.git
      (1) #  From within the directory 'vimo', move the script (file) 'vimo' to ${HOME}/bin
      cd vimo
-     mv vimo "{HOME}/bin"
+     mv vimo "${HOME}/bin"
      # It may be necessary to change permissions
      chmod u+x "${HOME}/bin/vimo"
-     (2) # Alternatively, create a symlink to 'vimo' in '~/bin'
-     cd ~/bin
+     (2) # Alternatively, create a symlink to 'vimo' in '${HOME}/bin'
+     cd ${HOME}/bin
      ln -s /path/to/vimo/vimo vimo
 
 ### Description    
 
     NAME
-           vim
+           vimo
     
            This script opens a file in vim from anywhere within an application
            framework.  
     
     SYNOPSIS
-            vim [-c] [-d] [-f] [-h] [-i] [-l] [-m] [-v] [-x] <search term> [filename1 
+            vimo [-c] [-d] [-f] [-h] [-i] [-l] [-m] [-v] [-x] <search term> [filename1 
             filname2 ...]
     
     DESCRIPTION
     
-           vim may be used to open any file from within an application 
+           vimo (vim-open) may be used to open any file from within an application 
            root directory without the need to change directory or specify 
-           file paths. For example, 'vim routes.rb' opens the 'routes.rb' 
+           file paths. For example, 'vimo routes.rb' opens the 'routes.rb' 
            file from any directory within a Ruby-on-Rails application.  
     
            The script is written with Ruby-on-Rails and Middleman in mind. 
@@ -141,29 +141,29 @@ On an Ubuntu/Xubuntu OS:
                and xubuntu 16.  
           (2)  It is best to double-quote search terms, especially if 
                wildcards are included 
-          (3)  vim may be used to search for either files or 
+          (3)  vimo may be used to search for either files or 
                directories, but not both.  The default behaviour is to 
                find files only.
     
     EXAMPLE USAGE
-          (1)  vim "routes.rb"  
-          (2)  vim -l "index*"   # list only 
-          (3)  vim -cl "index.html.erb" # list only from current directory
-          (4)  vim -clf "index.html*"   # list only from current directory
+          (1)  vimo "routes.rb"  
+          (2)  vimo -l "index*"   # list only 
+          (3)  vimo -cl "index.html.erb" # list only from current directory
+          (4)  vimo -clf "index.html*"   # list only from current directory
                and give full paths
-          (5)  vim -i "gemfile"  # case-insensitive
-          (6)  vim -vil "gemfile"  # verbose mode, case-insensitive, list only
-          (7)  vim -d  "stylesheet*" # directory search
-          (8)  vim "fileOne" "fileTwo"  # Open both files in vim provided that
+          (5)  vimo -i "gemfile"  # case-insensitive
+          (6)  vimo -vil "gemfile"  # verbose mode, case-insensitive, list only
+          (7)  vimo -d  "stylesheet*" # directory search
+          (8)  vimo "fileOne" "fileTwo"  # Open both files in vim provided that
                they exist in current directory
-          (9)  vim -m "fileOne" "fileTwo" # Multiple search terms
-          (10) vim -md "dirOne" "dirTwo"  # Multiple serch terms, directories only
-          (11) vim -dix "stylesheets"  # Unix-mode, case-insensitive, directories only
+          (9)  vimo -m "fileOne" "fileTwo" # Multiple search terms
+          (10) vimo -md "dirOne" "dirTwo"  # Multiple serch terms, directories only
+          (11) vimo -dix "stylesheets"  # Unix-mode, case-insensitive, directories only
     
     ADVANCED USAGE
-          (1)  vim -dx "db" | xargs tree
-          (2)  vim -dx "assets" | sed -n "1p" | xargs tree -L 1
-          (2)  vim -x "index*" | sed -n "2p"| xclip
+          (1)  vimo -dx "db" | xargs tree
+          (2)  vimo -dx "assets" | sed -n "1p" | xargs tree -L 1
+          (2)  vimo -x "index*" | sed -n "2p"| xclip
     
     AUTHOR
           tomgdow (thomasgdowling@gmail.com)
