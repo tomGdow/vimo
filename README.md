@@ -1,8 +1,9 @@
 ## vimo
 
-   vimo is a bash script that opens a file in vim from anywhere within an
-application such as that created by Ruby-on-Rails, without having to 
-change directory or specify a filepath.
+vimo is a bash script that opens a file in vim from anywhere within an   
+application such as that created by Ruby-on-Rails, without having   
+to change directory or specify a filepath.
+
 ### Demonstration
   
 A simple demonstration may be found [here](https://asciinema.org/a/as606114p3ph827jeoue7h432)
@@ -11,36 +12,36 @@ A simple demonstration may be found [here](https://asciinema.org/a/as606114p3ph8
 On an Ubuntu/Xubuntu OS:
 
 
-     (1) # Check if your home directory already contains a 'bin' directory 
+     (1) Check if your home directory already contains a 'bin' directory. 
          ls  ${HOME} | grep  bin 
-         # If this directory does not exist, you will need to create it
+         If this directory does not exist, you will need to create it.
          mkdir ${HOME}/bin
-         # On most Ubuntu/Xubuntu installations, it will already be present
+         On most Ubuntu/Xubuntu installations, it will already be present.
 
-     (2) # Clone the repository.
+     (2) Clone the repository.
          git clone https://github.com/tomGdow/vimo.git
-         # You should end up with the following directory struture
+         You should end up with the following directory struture.
          .
          └── vimo
              ├── README.md
              └── vimo
 
-     (3) # From within the directory 'vimo', move the file 'vimo' to ${HOME}/bin. 
+     (3) From within the directory 'vimo', move the file 'vimo' to ${HOME}/bin. 
          cd vimo
          mv vimo "${HOME}/bin"
 
-     (4) # It may be necessary to change permissions
+     (4) It may be necessary to change permissions.
          chmod u+x "${HOME}/bin/vimo"
 
-     (5) # As an alternative to (3) & (4), create a symlink to 'vimo' in '${HOME}/bin'
+     (5) As an alternative to (3) & (4), create a symlink to 'vimo' in '${HOME}/bin'.
          cd ${HOME}/bin
          ln -s /path/to/vimo/vimo vimo
 
-     (6) # It may be necessary to change permissions
+     (6) It may be necessary to change permissions.
          cd vimo
          chmod u+x "vimo"
 
-     (7) Try it out
+     (7) Try it out.
          vimo -h
 
 ### Description    
@@ -126,10 +127,10 @@ On an Ubuntu/Xubuntu OS:
                Or, include the following line in your .bashrc file
                export EDITOR='vim'
     
-          (2)  The VIMODIR ENV variable controls working directory and
+          (2)  The VIMODIR ENV variable controls the working directory and
                strives to be the application root directory.
                It may be changed to the current working directory as follows:
-               VIMODIR=\$(pwd) 
+               VIMODIR=$(pwd) 
                export VIMODIR
                Alternatively,
                VIMODIR='/full/path/to/working/directory' 
@@ -163,7 +164,7 @@ On an Ubuntu/Xubuntu OS:
           (1)  Tested with Rails 4 and Rails 5, and Middleman with Ubuntu 14
                and xubuntu 16.  
           (2)  It is best to double-quote search terms, especially if 
-               wildcards are included 
+               wildcards are included. 
           (3)  vimo may be used to search for either files or 
                directories, but not both.  The default behaviour is to 
                find files only.
