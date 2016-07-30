@@ -10,15 +10,38 @@ A simple demonstration may be found [here](https://asciinema.org/a/as606114p3ph8
 ### Download 
 On an Ubuntu/Xubuntu OS:
 
-     git clone https://github.com/tomGdow/vimo.git
-     (1) #  From within the directory 'vimo', move the script (file) 'vimo' to ${HOME}/bin
-     cd vimo
-     mv vimo "${HOME}/bin"
-     # It may be necessary to change permissions
-     chmod u+x "${HOME}/bin/vimo"
-     (2) # Alternatively, create a symlink to 'vimo' in '${HOME}/bin'
-     cd ${HOME}/bin
-     ln -s /path/to/vimo/vimo vimo
+
+     (1) # Check if your home directory already contains a 'bin' directory 
+         ls  ${HOME} | grep  bin 
+         # If this directory does not exist, you will need to create it
+         mkdir ${HOME}/bin
+         # On most Ubuntu/Xubuntu installations, it will already be present
+
+     (2) # Clone the repository.
+         git clone https://github.com/tomGdow/vimo.git
+         # You should end up with the following directory struture
+         .
+         └── vimo
+             ├── README.md
+             └── vimo
+
+     (3) # From within the directory 'vimo', move the file 'vimo' to ${HOME}/bin. 
+         cd vimo
+         mv vimo "${HOME}/bin"
+
+     (4) # It may be necessary to change permissions
+         chmod u+x "${HOME}/bin/vimo"
+
+     (5) # As an alternative to (3) & (4), create a symlink to 'vimo' in '${HOME}/bin'
+         cd ${HOME}/bin
+         ln -s /path/to/vimo/vimo vimo
+
+     (6) # It may be necessary to change permissions
+         cd vimo
+         chmod u+x "vimo"
+
+     (7) Try it out
+         vimo -h
 
 ### Description    
 
