@@ -432,8 +432,8 @@ openAll () {
 	declare -i count="${#arrFoundFiles[@]}"
 
 	if [[ ${count} -gt ${VIMOCHOICE} ]];then
-		read -p  "--> ${count} files will be opened in ${EDITOR}. \
-			Do you wish to continue [Y/n]?" userchoice
+		read -p  "--> ${count} files will be opened in ${EDITOR}.
+--> Do you wish to continue [Y/n]?" userchoice
 		if [[ $userchoice == [Yy]* ]]; then
 			$EDITOR ${foundFiles}
 		else
