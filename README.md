@@ -17,9 +17,9 @@ On an Ubuntu/Xubuntu OS:
          If this directory does not exist, you will need to create it.
          mkdir ${HOME}/bin
          Add the new directory to your path (or, alternatively, logout and 
-         login again)
+         login again).
          PATH=${PATH}:${HOME}/bin
-         On most Ubuntu/Xubuntu installations, ${HOME}/bin  will already
+         On most Ubuntu/Xubuntu installations, ${HOME}/bin will already
          be present.
 
      (2) Clone the repository.
