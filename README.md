@@ -16,7 +16,11 @@ On an Ubuntu/Xubuntu OS:
          ls  ${HOME} | grep  bin 
          If this directory does not exist, you will need to create it.
          mkdir ${HOME}/bin
-         On most Ubuntu/Xubuntu installations, it will already be present.
+         Add the new directory to your path (or, alternatively, logout and 
+         login again)
+         PATH=${PATH}:${HOME}/bin
+         On most Ubuntu/Xubuntu installations, ${HOME}/bin  will already
+         be present.
 
      (2) Clone the repository.
          git clone https://github.com/tomGdow/vimo.git
